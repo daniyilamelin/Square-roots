@@ -1,0 +1,102 @@
+import javax.swing.*;
+import java.awt.*;
+
+public class QuadraticEquationSwing extends JFrame {
+    private JTextField aField, bField, cField;
+    private JTextArea resultArea;
+
+    public QuadraticEquationSwing() {
+        setTitle("Quadratic Equation Solver");
+        setSize(450, 350);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception ignored) {}
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JLabel titleLabel = new JLabel("Quadratic Equation Solver");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        titleLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(titleLabel);
+        panel.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        aField = createInputField("Enter a:", panel);
+        bField = createInputField("Enter b:", panel);
+        cField = createInputField("Enter c:", panel);
+
+        JButton calculateButton = new JButton("Calculate");
+        calculateButton.setFont(new Font("Arial", Font.BOLD, 14));
+        calculateButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panel.add(Box.createRigidArea(new Dimension(0, 5)));
+        panel.add(calculateButton);
+
+        resultArea = new JTextArea(5, 20);
+        resultArea.setEditable(false);
+        resultArea.setFont(new Font("Arial", Font.PLAIN, 14));
+        resultArea.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        resultArea.setBackground(new Color(240, 240, 240));
+        panel.add(Box.createRigidArea(new Dimension(0, 5)));
+        panel.add(new JScrollPane(resultArea));
+
+        calculateButton.addActionListener(e -> solveEquation());
+
+        add(panel);
+        setVisible(true);
+    }
+
+    private JTextField createInputField(String labelText, JPanel panel) {
+        JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JLabel label = new JLabel(labelText);
+        label.setFont(new Font("Arial", Font.PLAIN, 14));
+        JTextField textField = new JTextField(10);
+        inputPanel.add(label);
+        inputPanel.add(textField);
+        panel.add(inputPanel);
+        return textField;
+    }
+
+    private void solveEquation() {
+        try {
+            double a = Double.parseDouble(aField.getText());
+            double b = Double.parseDouble(bField.getText());
+            double c = Double.parseDouble(cField.getText());
+
+            if (a == 0) {
+                resultArea.setText("Error: 'a' cannot be zero.");
+                return;
+            }
+
+            double discriminant = b * b - 4 * a * c;
+            StringBuilder result = new StringBuilder();
+
+            if (discriminant > 0) {
+                double x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+                double x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+                result.append(String.format("Two roots: x1 = %.2f, x2 = %.2f%n", x1, x2));
+            } else if (discriminant == 0) {
+                double x = -b / (2 * a);
+                result.append(String.format("One root: x = %.2f%n", x));
+            } else {
+                result.append("The equation has no real roots.\n");
+            }
+
+            double vertexX = -b / (2 * a);
+            double vertexY = -discriminant / (4 * a);
+            result.append(String.format("Parabola vertex: (%.2f, %.2f)%n", vertexX, vertexY))
+                  .append(a > 0 ? "Parabola opens upwards." : "Parabola opens downwards.");
+
+            resultArea.setText(result.toString());
+        } catch (NumberFormatException ex) {
+            resultArea.setText("Error: Please enter valid numeric values.");
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(QuadraticEquationSwing::new);
+    }
+}
