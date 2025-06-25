@@ -1,0 +1,78 @@
+import java.util.Scanner;
+
+abstract class EquationSolver {
+    abstract void solve();
+}
+
+class QuadraticEquationSolver extends EquationSolver {
+    private double a, b, c;
+
+    public QuadraticEquationSolver(double a, double b, double c) {
+        this.a = a;
+        this.b = b;
+        this.c = c;
+    }
+
+    @Override
+    public void solve() {
+        double discriminant = b * b - 4 * a * c;
+        System.out.println("\nCalculation results:");
+        System.out.println("-----------------------");
+        if (discriminant > 0) {
+            double x1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+            double x2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+            System.out.printf("The equation has two real roots: x1 = %.2f, x2 = %.2f%n", x1, x2);
+        } else if (discriminant == 0) {
+            double x = -b / (2 * a);
+            System.out.printf("The equation has one real root: x = %.2f%n", x);
+        } else {
+            System.out.println("The equation has no real roots.");
+        }
+        calculateVertex();
+        analyzeParabola();
+        System.out.println("-----------------------");
+        System.out.println("Calculation completed.");
+    }
+
+    private void calculateVertex() {
+        double vertexX = -b / (2 * a);
+        double vertexY = -(b * b - 4 * a * c) / (4 * a);
+        System.out.printf("The vertex of the parabola is at (%.2f, %.2f)%n", vertexX, vertexY);
+    }
+
+    private void analyzeParabola() {
+        if (a > 0) {
+            System.out.println("The parabola opens upwards.");
+        } else {
+            System.out.println("The parabola opens downwards.");
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Quadratic equation solver for ax^2 + bx + c = 0");
+        double a, b, c;
+        while (true) {
+            try {
+                System.out.print("Enter a (cannot be 0): ");
+                a = Double.parseDouble(scanner.nextLine());
+                if (a == 0) {
+                    System.out.println("a cannot be zero, as this is not a quadratic equation.");
+                    continue;
+                }
+                System.out.print("Enter b: ");
+                b = Double.parseDouble(scanner.nextLine());
+                System.out.print("Enter c: ");
+                c = Double.parseDouble(scanner.nextLine());
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Error! Please enter numeric values.");
+            }
+        }
+        EquationSolver solver = new QuadraticEquationSolver(a, b, c);
+        solver.solve();
+        scanner.close();
+    }
+}
